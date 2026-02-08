@@ -2,13 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenAI } from '@google/genai'
 import { createClient } from '@supabase/supabase-js'
 
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
+// Lazy-initialized clients — avoids build-time errors when env vars aren't available
+let genAI: GoogleGenAI | null = null
+let supabaseAdmin: ReturnType<typeof createClient> | null = null
 
-// Use service role for storage uploads (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getGenAI() {
+  if (!genAI) genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
+  return genAI
+}
+
+function getSupabaseAdmin() {
+  if (!supabaseAdmin) supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+  return supabaseAdmin
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +33,7 @@ export async function POST(request: NextRequest) {
     const prompt = `Generate an image of a circular embroidered Boy Scout-style merit badge patch. The badge is for "${badgeName}". The task to earn it: "${taskDescription}". The badge should feature a relevant symbolic icon in the center, surrounded by a colored stitched border with detailed embroidered edging. The entire badge should have visible cloth fabric texture with detailed thread stitching throughout. Style: a real embroidered fabric patch photographed from directly above on a plain dark green fabric background. The badge should look like it could be sewn onto a scout sash. Make it colorful and visually appealing.`
 
     // Generate image with Gemini 2.0 Flash (image generation model)
-    const response = await genAI.models.generateContent({
+    const response = await getGenAI().models.generateContent({
       model: 'gemini-2.0-flash-exp-image-generation',
       contents: prompt,
       config: {
@@ -59,7 +68,7 @@ export async function POST(request: NextRequest) {
     const fileName = `${badgeId}.${extension}`
 
     // Upload to Supabase Storage
-    const { error: uploadError } = await supabaseAdmin.storage
+    const { error: uploadError } = await getSupabaseAdmin().storage
       .from('badge-images')
       .upload(fileName, buffer, {
         contentType: mimeType,
@@ -72,12 +81,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Get public URL
-    const { data: { publicUrl } } = supabaseAdmin.storage
+    const { data: { publicUrl } } = getSupabaseAdmin().storage
       .from('badge-images')
       .getPublicUrl(fileName)
 
     // Update badge record with image URL
-    const { error: updateError } = await supabaseAdmin
+    const { error: updateError } = await getSupabaseAdmin()
       .from('badges')
       .update({ image_url: publicUrl })
       .eq('id', badgeId)
