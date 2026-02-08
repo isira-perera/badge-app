@@ -10,7 +10,7 @@ export default function LandingPage() {
           <Shield className="w-12 h-12 text-accent" />
           <h1 className="text-5xl font-bold tracking-tight">BadgeBoard</h1>
         </div>
-        <p className="text-xl text-muted mb-12">
+        <p className="text-xl text-muted-foreground mb-12">
           Earn badges. Share learnings. Level up together.
         </p>
 
@@ -19,21 +19,21 @@ export default function LandingPage() {
           <div className="text-center p-6 bg-surface rounded-lg">
             <Trophy className="w-10 h-10 text-accent mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">1. Earn Badges</h3>
-            <p className="text-muted text-sm">
+            <p className="text-muted-foreground text-sm">
               Try new things and earn AI-generated scout badges for your experiences.
             </p>
           </div>
           <div className="text-center p-6 bg-surface rounded-lg">
             <Sparkles className="w-10 h-10 text-accent mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">2. Share Learnings</h3>
-            <p className="text-muted text-sm">
+            <p className="text-muted-foreground text-sm">
               Reflect on what you learned and inspire others to try it too.
             </p>
           </div>
           <div className="text-center p-6 bg-surface rounded-lg">
             <Users className="w-10 h-10 text-accent mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">3. Level Up</h3>
-            <p className="text-muted text-sm">
+            <p className="text-muted-foreground text-sm">
               Climb the leaderboard as your badge sash grows. Who will reach the top?
             </p>
           </div>
