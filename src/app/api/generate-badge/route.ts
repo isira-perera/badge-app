@@ -86,9 +86,10 @@ export async function POST(request: NextRequest) {
       .getPublicUrl(fileName)
 
     // Update badge record with image URL
-    const { error: updateError } = await getSupabaseAdmin()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updateError } = await (getSupabaseAdmin() as any)
       .from('badges')
-      .update({ image_url: publicUrl } as Record<string, unknown>)
+      .update({ image_url: publicUrl })
       .eq('id', badgeId)
 
     if (updateError) {
