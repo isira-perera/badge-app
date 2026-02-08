@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     // Update badge record with image URL
     const { error: updateError } = await getSupabaseAdmin()
       .from('badges')
-      .update({ image_url: publicUrl })
+      .update({ image_url: publicUrl } as Record<string, unknown>)
       .eq('id', badgeId)
 
     if (updateError) {
