@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const prompt = `Generate an image of a circular embroidered Boy Scout-style merit badge patch. The badge is for "${badgeName}". The task to earn it: "${taskDescription}". The badge should feature a relevant symbolic icon in the center, surrounded by a colored stitched border with detailed embroidered edging. The entire badge should have visible cloth fabric texture with detailed thread stitching throughout. Style: a real embroidered fabric patch photographed from directly above on a plain dark green fabric background. The badge should look like it could be sewn onto a scout sash. Make it colorful and visually appealing.`
+    const prompt = `Generate an image of a circular embroidered Boy Scout-style merit badge patch. The badge represents "${badgeName}". Use the following context to inspire the visual design and choose a symbolic icon, but DO NOT include any text or words on the badge: "${taskDescription}". The badge should feature a single relevant symbolic icon or illustration in the center, surrounded by a colored stitched border with detailed embroidered edging. No text, no letters, no words anywhere on the badge. The entire badge should have visible cloth fabric texture with detailed thread stitching throughout. Style: a real embroidered fabric patch photographed from directly above on a plain dark green fabric background. The badge should look like it could be sewn onto a scout sash. Make it colorful and visually appealing.`
 
     // Generate image with Gemini 2.5 Flash (stable image generation model)
     const response = await getGenAI().models.generateContent({
