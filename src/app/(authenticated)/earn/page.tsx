@@ -128,6 +128,23 @@ export default function EarnPage() {
       return;
     }
 
+    // Check for duplicate badge name
+    const { data: existing } = await supabase
+      .from("badges")
+      .select("id")
+      .eq("name", newBadgeName.trim())
+      .maybeSingle();
+
+    if (existing) {
+      setError(
+        'A badge called "' +
+          newBadgeName.trim() +
+          '" already exists. Switch to \'Earn Existing Badge\' to earn it.'
+      );
+      setSubmitting(false);
+      return;
+    }
+
     // Create the badge
     const { data: newBadge, error: badgeError } = await supabase
       .from("badges")

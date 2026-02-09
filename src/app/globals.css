@@ -95,6 +95,27 @@ body {
     );
 }
 
+/* Fluid sash layout */
+:root {
+  --sash-basis: calc((100vw - 56px) / 3);
+  --sash-min: 72px;
+  --sash-max-strip: 120px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --sash-basis: 110px;
+    --sash-min: 88px;
+    --sash-max-strip: 140px;
+  }
+}
+
+.sash-item {
+  flex: 1 0 var(--sash-basis);
+  min-width: var(--sash-min);
+  max-width: 200px;
+}
+
 /* Badge stitching effect */
 .badge-stitch {
   border: 2px dashed rgba(255,255,255,0.2);

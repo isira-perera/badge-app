@@ -23,7 +23,7 @@ export default async function AuthenticatedLayout({
   return (
     <>
       <Nav isAdmin={profile?.is_admin ?? false} />
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8 pb-20 sm:pb-8">
         {children}
       </main>
     </>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { Trophy } from "lucide-react";
 import { BadgePin } from "@/components/BadgePin";
 import { BadgeModal } from "@/components/BadgeModal";
@@ -67,58 +69,68 @@ export function SashBoard({ entries }: SashBoardProps) {
     );
   }
 
-  // Determine the maximum badge count for scaling sash heights
-  const maxBadges = Math.max(...sorted.map((e) => e.profile.badge_count), 1);
-
   return (
     <>
-      {/* Desktop: horizontal scroll. Mobile: vertical stack */}
-      <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-3 overflow-x-auto pb-4 md:px-2">
+      {/* Fluid horizontal sash layout — always horizontal, scrolls when needed */}
+      <div className="overflow-hidden">
+      <div className="flex flex-row items-end gap-2 md:gap-3 overflow-x-auto pb-4 md:px-2">
         {sorted.map((entry, index) => {
           const badgeCount = entry.profile.badge_count;
-          // Minimum height 200px, scales up with badges relative to max
-          const sashMinHeight = 200;
-          const sashMaxHeight = 600;
-          const sashHeight =
-            sashMinHeight +
-            (badgeCount / maxBadges) * (sashMaxHeight - sashMinHeight);
 
           return (
             <div
               key={entry.profile.id}
-              className="flex flex-col items-center flex-shrink-0 w-full md:w-auto"
+              className="flex flex-col items-center sash-item"
             >
-              {/* Rank indicator for top 3 */}
-              {index < 3 && (
-                <div
-                  className={`text-xs font-bold mb-1 px-2 py-0.5 rounded-full ${
-                    index === 0
-                      ? "bg-accent text-accent-foreground"
-                      : index === 1
-                      ? "bg-muted-foreground/30 text-foreground"
-                      : "bg-[#8B5E3C]/30 text-[#d4a06a]"
-                  }`}
-                >
-                  #{index + 1}
+              <Link href={`/profile/${entry.profile.id}`} className="flex flex-col items-center w-full">
+                {/* Rank indicator for top 3 */}
+                {index < 3 && (
+                  <div
+                    className={`text-[10px] md:text-xs font-bold mb-0.5 md:mb-1 px-1.5 md:px-2 py-0.5 rounded-full ${
+                      index === 0
+                        ? "bg-accent text-accent-foreground"
+                        : index === 1
+                        ? "bg-muted-foreground/30 text-foreground"
+                        : "bg-[#8B5E3C]/30 text-[#d4a06a]"
+                    }`}
+                  >
+                    #{index + 1}
+                  </div>
+                )}
+
+                {/* Avatar */}
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary border border-accent/50 flex items-center justify-center overflow-hidden mb-0.5">
+                  {entry.profile.avatar_url ? (
+                    <Image
+                      src={entry.profile.avatar_url}
+                      alt={entry.profile.display_name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-accent font-bold text-xs md:text-sm">
+                      {entry.profile.display_name.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
-              )}
 
-              {/* Name */}
-              <div className="text-sm font-semibold text-foreground mb-0.5 text-center truncate max-w-[120px]">
-                {entry.profile.display_name}
-              </div>
+                {/* Name */}
+                <div className="text-xs md:text-sm font-semibold text-foreground mb-0.5 text-center truncate w-full">
+                  {entry.profile.display_name}
+                </div>
 
-              {/* Badge count */}
-              <div className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                <Trophy className="w-3 h-3" />
-                {badgeCount} {badgeCount === 1 ? "badge" : "badges"}
-              </div>
+                {/* Badge count */}
+                <div className="text-[10px] md:text-xs text-muted-foreground mb-1 md:mb-2 flex items-center gap-0.5 md:gap-1">
+                  <Trophy className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                  {badgeCount} {badgeCount === 1 ? "badge" : "badges"}
+                </div>
+              </Link>
 
               {/* Sash strip */}
               <div
-                className="relative w-[90px] md:w-[100px] rounded-b-2xl rounded-t-lg canvas-texture overflow-hidden flex flex-col items-center gap-3 py-4 px-2"
+                className="relative w-full max-w-[var(--sash-max-strip)] rounded-b-2xl rounded-t-lg canvas-texture overflow-hidden flex flex-col items-center gap-2 md:gap-3 py-3 md:py-4 px-1.5 md:px-2"
                 style={{
-                  minHeight: `${sashHeight}px`,
                   background: `linear-gradient(
                     180deg,
                     var(--primary) 0%,
@@ -150,6 +162,7 @@ export function SashBoard({ entries }: SashBoardProps) {
             </div>
           );
         })}
+      </div>
       </div>
 
       {/* Badge detail modal */}

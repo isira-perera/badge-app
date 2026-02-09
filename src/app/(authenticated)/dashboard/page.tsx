@@ -81,7 +81,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">The Sash Board</h2>
           <div className="text-sm text-muted-foreground">
-            {entries.length} {entries.length === 1 ? "scout" : "scouts"}
+            {entries.length} {entries.length === 1 ? "intern" : "interns"}
           </div>
         </div>
         <SashBoard entries={entries} />

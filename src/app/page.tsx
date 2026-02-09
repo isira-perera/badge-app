@@ -20,7 +20,7 @@ export default function LandingPage() {
             <Trophy className="w-10 h-10 text-accent mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">1. Earn Badges</h3>
             <p className="text-muted-foreground text-sm">
-              Try new things and earn AI-generated scout badges for your experiences.
+              Try new things and earn AI-generated badges for your intern experiences.
             </p>
           </div>
           <div className="text-center p-6 bg-surface rounded-lg">

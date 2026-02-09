@@ -9,9 +9,10 @@ import type { BadgeWithCount } from "./page";
 export function BadgeCatalogSearch({ badges }: { badges: BadgeWithCount[] }) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filtered = badges.filter((badge) =>
-    badge.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filtered = badges.filter((badge) => {
+    const q = searchQuery.toLowerCase();
+    return badge.name.toLowerCase().includes(q) || badge.task.toLowerCase().includes(q);
+  });
 
   return (
     <>
@@ -20,7 +21,7 @@ export function BadgeCatalogSearch({ badges }: { badges: BadgeWithCount[] }) {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <input
           type="text"
-          placeholder="Search badges by name..."
+          placeholder="Search badges by name or task..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"

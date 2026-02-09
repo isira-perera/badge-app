@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-**BadgeBoard** is a gamified community badge app where friends earn Boy Scout-style badges for new experiences, share learnings, and compete on a sash-based leaderboard.
+**BadgeBoard** is a gamified community badge app where interns earn badges for new experiences, share learnings, and compete on a sash-based leaderboard.
 
 **Stack:** Next.js 16 (App Router, Turbopack) + Tailwind CSS v4 + Supabase (Postgres, Auth, Storage) + Google Gemini 2.5 Flash for AI badge image generation. Deployed on Vercel.
 

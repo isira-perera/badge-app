@@ -71,6 +71,17 @@ export function BadgePin({ badge, onClick }: BadgePinProps) {
             />
           )}
         </div>
+
+        {/* Badge name label — scales down for longer names, wraps to 2 lines max */}
+        <div className={`text-center leading-tight text-foreground/70 mt-0.5 max-w-[56px] md:max-w-[72px] mx-auto line-clamp-2 break-words ${
+          badge.name.length > 12
+            ? "text-[6px] md:text-[8px]"
+            : badge.name.length > 8
+            ? "text-[7px] md:text-[9px]"
+            : "text-[8px] md:text-[10px]"
+        }`}>
+          {badge.name}
+        </div>
       </div>
     </>
   );

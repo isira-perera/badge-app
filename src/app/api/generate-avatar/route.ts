@@ -21,20 +21,18 @@ function getSupabaseAdmin() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { badgeName, taskDescription, badgeId, adminComments } = await request.json()
+    const { userId, color, symbol, vibe } = await request.json()
 
-    if (!badgeName || !taskDescription || !badgeId) {
+    if (!userId || !color || !symbol || !vibe) {
       return NextResponse.json(
-        { error: 'Missing required fields: badgeName, taskDescription, and badgeId are all required' },
+        { error: 'Missing required fields: userId, color, symbol, and vibe are all required' },
         { status: 400 }
       )
     }
 
-    const adminDirections = adminComments ? ` Additional directions from admin: "${adminComments}".` : ''
+    const prompt = `Generate a circular embroidered patch-style profile avatar. Color theme: ${color}. Central symbol: ${symbol}. Mood/style: ${vibe}. No text, no letters, no words. Embroidered fabric texture, stitched border, photographed from above on dark green fabric. Colorful and visually appealing.`
 
-    const prompt = `Generate an image of a circular embroidered merit badge patch. The badge represents "${badgeName}". Use the following context to inspire the visual design and choose a symbolic icon, but DO NOT include any text or words on the badge: "${taskDescription}".${adminDirections} The badge should feature a single relevant symbolic icon or illustration in the center, surrounded by a colored stitched border with detailed embroidered edging. No text, no letters, no words anywhere on the badge. The entire badge should have visible cloth fabric texture with detailed thread stitching throughout. Style: a real embroidered fabric patch photographed from directly above on a plain dark green fabric background. The badge should look like it could be sewn onto an intern sash. Make it colorful and visually appealing.`
-
-    // Generate image with Gemini 2.5 Flash (stable image generation model)
+    // Generate image with Gemini 2.5 Flash
     const response = await getGenAI().models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: prompt,
@@ -67,43 +65,43 @@ export async function POST(request: NextRequest) {
     // Convert base64 to buffer
     const buffer = Buffer.from(imageData, 'base64')
     const extension = mimeType === 'image/jpeg' ? 'jpg' : 'png'
-    const fileName = `${badgeId}.${extension}`
+    const fileName = `${userId}.${extension}`
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage (avatars bucket)
     const { error: uploadError } = await getSupabaseAdmin().storage
-      .from('badge-images')
+      .from('avatars')
       .upload(fileName, buffer, {
         contentType: mimeType,
         upsert: true,
       })
 
     if (uploadError) {
-      console.error('Upload error:', uploadError)
-      return NextResponse.json({ error: 'Failed to upload image to storage' }, { status: 500 })
+      console.error('Avatar upload error:', uploadError)
+      return NextResponse.json({ error: 'Failed to upload avatar to storage' }, { status: 500 })
     }
 
     // Get public URL
     const { data: { publicUrl } } = getSupabaseAdmin().storage
-      .from('badge-images')
+      .from('avatars')
       .getPublicUrl(fileName)
 
-    // Update badge record with image URL
+    // Update profile record with avatar URL
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: updateError } = await (getSupabaseAdmin() as any)
-      .from('badges')
-      .update({ image_url: publicUrl })
-      .eq('id', badgeId)
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('id', userId)
 
     if (updateError) {
-      console.error('Update error:', updateError)
-      return NextResponse.json({ error: 'Failed to update badge record' }, { status: 500 })
+      console.error('Profile update error:', updateError)
+      return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
     }
 
-    return NextResponse.json({ imageUrl: publicUrl })
+    return NextResponse.json({ avatarUrl: publicUrl })
   } catch (error) {
-    console.error('Badge generation error:', error)
+    console.error('Avatar generation error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate badge', details: error instanceof Error ? error.message : String(error) },
+      { error: 'Failed to generate avatar', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }
