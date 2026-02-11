@@ -216,7 +216,8 @@ CREATE TRIGGER on_auth_user_created
 -- ---------------------------------------------------------------------------
 -- leaderboard: profiles ranked by number of badges earned
 -- ---------------------------------------------------------------------------
-CREATE OR REPLACE VIEW public.leaderboard AS
+CREATE OR REPLACE VIEW public.leaderboard
+WITH (security_invoker = true) AS
 SELECT
   p.id,
   p.display_name,
@@ -233,7 +234,8 @@ COMMENT ON VIEW public.leaderboard IS
 -- ---------------------------------------------------------------------------
 -- recent_activity: latest 50 badge awards with user + badge info
 -- ---------------------------------------------------------------------------
-CREATE OR REPLACE VIEW public.recent_activity AS
+CREATE OR REPLACE VIEW public.recent_activity
+WITH (security_invoker = true) AS
 SELECT
   ub.id          AS activity_id,
   ub.awarded_at,
