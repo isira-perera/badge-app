@@ -258,7 +258,36 @@ COMMENT ON VIEW public.recent_activity IS
 
 
 -- ============================================================================
--- 5. STORAGE: public bucket for badge images
+-- 5. SPECTATOR LINKS: shareable read-only links for non-members
+-- ============================================================================
+
+CREATE TABLE public.spectator_links (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code        TEXT NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(6), 'hex'),
+  label       TEXT,
+  created_by  UUID REFERENCES public.profiles (id) ON DELETE SET NULL,
+  expires_at  TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE public.spectator_links IS
+  'Shareable links that let non-authenticated users view the leaderboard read-only.';
+
+ALTER TABLE public.spectator_links ENABLE ROW LEVEL SECURITY;
+
+-- Only admins can manage spectator links
+CREATE POLICY "spectator_links: admin all"
+  ON public.spectator_links FOR ALL
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND is_admin = true
+    )
+  );
+
+-- ============================================================================
+-- 6. STORAGE: public bucket for badge images
 -- ============================================================================
 
 -- Create the bucket (public so images can be displayed without auth)
@@ -280,4 +309,27 @@ CREATE POLICY "badge-images: public read"
 
 -- ============================================================================
 -- Done! Your badge app schema is ready.
+-- ============================================================================
+
+-- ============================================================================
+-- MIGRATION: Add spectator_links table (run separately if schema already exists)
+-- ============================================================================
+-- CREATE TABLE IF NOT EXISTS public.spectator_links (
+--   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--   code        TEXT NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(6), 'hex'),
+--   label       TEXT,
+--   created_by  UUID REFERENCES public.profiles (id) ON DELETE SET NULL,
+--   expires_at  TIMESTAMPTZ,
+--   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+-- );
+-- ALTER TABLE public.spectator_links ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "spectator_links: admin all"
+--   ON public.spectator_links FOR ALL
+--   TO authenticated
+--   USING (
+--     EXISTS (
+--       SELECT 1 FROM public.profiles
+--       WHERE id = auth.uid() AND is_admin = true
+--     )
+--   );
 -- ============================================================================

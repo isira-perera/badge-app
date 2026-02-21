@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `src/lib/supabase/server.ts` — Server Components and Server Actions. Uses `await cookies()` (async, Next.js 15+).
 - `src/lib/supabase/client.ts` — Client Components (`"use client"`). Browser-side, synchronous.
-- `src/lib/supabase/middleware.ts` — Session refresh + auth redirect logic. Public routes: `/`, `/login`, `/join`, `/auth`, `/api`.
+- `src/lib/supabase/middleware.ts` — Session refresh + auth redirect logic. Public routes: `/`, `/login`, `/join`, `/auth`, `/api`, `/spectate`.
 
 Always import from `@/lib/supabase/server` in Server Components and `@/lib/supabase/client` in Client Components. Never mix them.
 
@@ -37,10 +37,11 @@ Image generation is **fire-and-forget** from the earn page — the badge is awar
 
 ### Database Schema
 
-Defined in `supabase/schema.sql`. Three tables:
+Defined in `supabase/schema.sql`. Four tables:
 - `profiles` — auto-created via trigger from `auth.users`, has `display_name`, `is_admin`
 - `badges` — shared definitions (name, task, image_url)
 - `user_badges` — who earned what + personal `learning` text. UNIQUE(user_id, badge_id).
+- `spectator_links` — shareable codes for read-only public access. Admin-only CRUD via RLS.
 
 Two views: `leaderboard` (profiles + badge count DESC), `recent_activity` (last 50 awards with joins).
 
@@ -55,6 +56,10 @@ RLS is enabled on all tables. Users can update their own profile/user_badges, ad
 - `SashBoard` — Signature leaderboard. Vertical sash strips with height proportional to badge count.
 - `BadgePin` — Individual badge on a sash. Deterministic rotation from ID hash. Hover tooltip.
 - `BadgeModal` — Badge detail popup. Shows all earners' learnings.
+
+### Spectator Mode
+
+`/spectate/[code]` — Public read-only view of the leaderboard. No auth required. Uses a lazy-initialized service-role Supabase client to bypass RLS. The `spectator_links` table stores codes with optional labels and expiry dates. Admins create/delete links from the admin dashboard. `SashBoard` accepts a `spectatorMode` prop to disable profile links.
 
 ## Environment Variables
 

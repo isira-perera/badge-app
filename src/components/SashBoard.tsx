@@ -15,9 +15,10 @@ type SashEntry = {
 
 type SashBoardProps = {
   entries: SashEntry[];
+  spectatorMode?: boolean;
 };
 
-export function SashBoard({ entries }: SashBoardProps) {
+export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
   const [selectedBadge, setSelectedBadge] = useState<
     (Badge & { learning: string; awarded_at: string }) | null
   >(null);
@@ -82,50 +83,64 @@ export function SashBoard({ entries }: SashBoardProps) {
               key={entry.profile.id}
               className="flex flex-col items-center sash-item"
             >
-              <Link href={`/profile/${entry.profile.id}`} className="flex flex-col items-center w-full">
-                {/* Rank indicator for top 3 */}
-                {index < 3 && (
-                  <div
-                    className={`text-[10px] md:text-xs font-bold mb-0.5 md:mb-1 px-1.5 md:px-2 py-0.5 rounded-full ${
-                      index === 0
-                        ? "bg-accent text-accent-foreground"
-                        : index === 1
-                        ? "bg-muted-foreground/30 text-foreground"
-                        : "bg-[#8B5E3C]/30 text-[#d4a06a]"
-                    }`}
-                  >
-                    #{index + 1}
+              {(() => {
+                const profileContent = (
+                  <>
+                    {/* Rank indicator for top 3 */}
+                    {index < 3 && (
+                      <div
+                        className={`text-[10px] md:text-xs font-bold mb-0.5 md:mb-1 px-1.5 md:px-2 py-0.5 rounded-full ${
+                          index === 0
+                            ? "bg-accent text-accent-foreground"
+                            : index === 1
+                            ? "bg-muted-foreground/30 text-foreground"
+                            : "bg-[#8B5E3C]/30 text-[#d4a06a]"
+                        }`}
+                      >
+                        #{index + 1}
+                      </div>
+                    )}
+
+                    {/* Avatar */}
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary border border-accent/50 flex items-center justify-center overflow-hidden mb-0.5">
+                      {entry.profile.avatar_url ? (
+                        <Image
+                          src={entry.profile.avatar_url}
+                          alt={entry.profile.display_name}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-accent font-bold text-xs md:text-sm">
+                          {entry.profile.display_name.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Name */}
+                    <div className="text-xs md:text-sm font-semibold text-foreground mb-0.5 text-center truncate w-full">
+                      {entry.profile.display_name}
+                    </div>
+
+                    {/* Badge count */}
+                    <div className="text-[10px] md:text-xs text-muted-foreground mb-1 md:mb-2 flex items-center gap-0.5 md:gap-1">
+                      <Trophy className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                      {badgeCount} {badgeCount === 1 ? "badge" : "badges"}
+                    </div>
+                  </>
+                );
+
+                return spectatorMode ? (
+                  <div className="flex flex-col items-center w-full">
+                    {profileContent}
                   </div>
-                )}
-
-                {/* Avatar */}
-                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary border border-accent/50 flex items-center justify-center overflow-hidden mb-0.5">
-                  {entry.profile.avatar_url ? (
-                    <Image
-                      src={entry.profile.avatar_url}
-                      alt={entry.profile.display_name}
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-accent font-bold text-xs md:text-sm">
-                      {entry.profile.display_name.charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
-
-                {/* Name */}
-                <div className="text-xs md:text-sm font-semibold text-foreground mb-0.5 text-center truncate w-full">
-                  {entry.profile.display_name}
-                </div>
-
-                {/* Badge count */}
-                <div className="text-[10px] md:text-xs text-muted-foreground mb-1 md:mb-2 flex items-center gap-0.5 md:gap-1">
-                  <Trophy className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                  {badgeCount} {badgeCount === 1 ? "badge" : "badges"}
-                </div>
-              </Link>
+                ) : (
+                  <Link href={`/profile/${entry.profile.id}`} className="flex flex-col items-center w-full">
+                    {profileContent}
+                  </Link>
+                );
+              })()}
 
               {/* Sash strip */}
               <div
