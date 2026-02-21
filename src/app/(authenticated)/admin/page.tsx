@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Shield, Users, BookOpen, Link as LinkIcon } from "lucide-react";
+import { Shield, Users, BookOpen, Link as LinkIcon, Eye } from "lucide-react";
 import { InviteSection } from "./invite-section";
+import { SpectatorLinks } from "./spectator-links";
 import { UserManagement } from "./user-management";
 import { BadgeManagement } from "./badge-management";
 
@@ -54,6 +55,12 @@ export default async function AdminPage() {
         (badgeEarnerCounts[ub.badge_id] || 0) + 1;
     }
   }
+
+  // Fetch spectator links
+  const { data: spectatorLinks } = await supabase
+    .from("spectator_links")
+    .select("id, code, label, expires_at, created_at")
+    .order("created_at", { ascending: false });
 
   const profilesWithCounts = (profiles ?? []).map((p) => ({
     ...p,
@@ -116,6 +123,15 @@ export default async function AdminPage() {
           Invite Link
         </h2>
         <InviteSection />
+      </section>
+
+      {/* Spectator Links Section */}
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Eye className="w-5 h-5 text-accent" />
+          Spectator Links
+        </h2>
+        <SpectatorLinks links={(spectatorLinks as Array<{ id: string; code: string; label: string | null; expires_at: string | null; created_at: string }>) ?? []} />
       </section>
 
       {/* User Management Section */}
