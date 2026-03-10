@@ -46,14 +46,16 @@ export function BadgePin({ badge, onClick }: BadgePinProps) {
 
       <div
         ref={tooltipRef}
-        className="relative flex-shrink-0 cursor-pointer group"
-        style={{ transform: `rotate(${rotation}deg)` }}
+        className="relative flex-shrink-0 cursor-pointer group flex flex-col items-center"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onClick={onClick}
       >
-        {/* Badge circle with stitching */}
-        <div className="badge-stitch p-1 transition-transform duration-200 group-hover:scale-110">
+        {/* Badge circle with stitching — only the pin rotates */}
+        <div
+          className="badge-stitch p-1 transition-transform duration-200 group-hover:scale-110"
+          style={{ transform: `rotate(${rotation}deg)` }}
+        >
           {showPlaceholder ? (
             <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary flex items-center justify-center">
               <span className="text-accent font-bold text-lg md:text-xl">
@@ -72,7 +74,7 @@ export function BadgePin({ badge, onClick }: BadgePinProps) {
           )}
         </div>
 
-        {/* Badge name label — scales down for longer names, wraps to 2 lines max */}
+        {/* Badge name label — outside rotation so text stays straight */}
         <div className={`text-center leading-tight text-foreground/70 mt-0.5 max-w-[56px] md:max-w-[72px] mx-auto line-clamp-2 break-words ${
           badge.name.length > 12
             ? "text-[6px] md:text-[8px]"
