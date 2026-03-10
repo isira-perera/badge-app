@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trophy } from "lucide-react";
+import { Trophy, Gift } from "lucide-react";
 import { BadgePin } from "@/components/BadgePin";
 import { BadgeModal } from "@/components/BadgeModal";
 import type { Badge, LeaderboardEntry } from "@/lib/supabase/types";
@@ -16,9 +16,10 @@ type SashEntry = {
 type SashBoardProps = {
   entries: SashEntry[];
   spectatorMode?: boolean;
+  topGiverId?: string | null;
 };
 
-export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
+export function SashBoard({ entries, spectatorMode = false, topGiverId }: SashBoardProps) {
   const [selectedBadge, setSelectedBadge] = useState<
     (Badge & { learning: string; awarded_at: string }) | null
   >(null);
@@ -34,7 +35,7 @@ export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
 
   function handleBadgeClick(
     badge: Badge & { learning: string; awarded_at: string },
-    entry: SashEntry
+    _entry: SashEntry
   ) {
     // Collect all earners of this badge across all entries
     const earners: Array<{
@@ -65,7 +66,7 @@ export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
       <div className="text-center py-16 text-muted-foreground">
         <Trophy className="w-16 h-16 mx-auto mb-4 opacity-40" />
         <p className="text-lg">No sashes yet.</p>
-        <p className="text-sm mt-1">Be the first to earn a badge and start your sash!</p>
+        <p className="text-sm mt-1">Give someone a badge to start their sash!</p>
       </div>
     );
   }
@@ -77,11 +78,12 @@ export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
       <div className="flex flex-row items-end gap-2 md:gap-3 overflow-x-auto pb-4 md:px-2">
         {sorted.map((entry, index) => {
           const badgeCount = entry.profile.badge_count;
+          const isTopGiver = topGiverId === entry.profile.id;
 
           return (
             <div
               key={entry.profile.id}
-              className="flex flex-col items-center sash-item"
+              className={`flex flex-col items-center sash-item ${isTopGiver ? "top-giver" : ""}`}
             >
               {(() => {
                 const profileContent = (
@@ -128,6 +130,12 @@ export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
                       <Trophy className="w-2.5 h-2.5 md:w-3 md:h-3" />
                       {badgeCount} {badgeCount === 1 ? "badge" : "badges"}
                     </div>
+                    {isTopGiver && (
+                      <div className="text-[9px] md:text-[10px] font-bold text-accent mb-1 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-accent/15 border border-accent/30">
+                        <Gift className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                        Top Giver
+                      </div>
+                    )}
                   </>
                 );
 
@@ -144,7 +152,7 @@ export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
 
               {/* Sash strip */}
               <div
-                className="relative w-full max-w-[var(--sash-max-strip)] rounded-b-2xl rounded-t-lg canvas-texture overflow-hidden flex flex-col items-center gap-2 md:gap-3 py-3 md:py-4 px-1.5 md:px-2"
+                className={`relative w-full max-w-[var(--sash-max-strip)] rounded-b-2xl rounded-t-lg canvas-texture overflow-hidden flex flex-col items-center gap-2 md:gap-3 py-3 md:py-4 px-1.5 md:px-2 ${isTopGiver ? "top-giver-glow" : ""}`}
                 style={{
                   background: `linear-gradient(
                     180deg,
@@ -152,7 +160,15 @@ export function SashBoard({ entries, spectatorMode = false }: SashBoardProps) {
                     #1e4a1e 40%,
                     #1a3d1a 100%
                   )`,
-                  boxShadow: `
+                  boxShadow: isTopGiver
+                    ? `
+                    inset 2px 0 4px rgba(0,0,0,0.3),
+                    inset -2px 0 4px rgba(0,0,0,0.3),
+                    0 0 20px rgba(212,168,67,0.4),
+                    0 0 40px rgba(212,168,67,0.2),
+                    0 4px 12px rgba(0,0,0,0.4)
+                  `
+                    : `
                     inset 2px 0 4px rgba(0,0,0,0.3),
                     inset -2px 0 4px rgba(0,0,0,0.3),
                     0 4px 12px rgba(0,0,0,0.4)

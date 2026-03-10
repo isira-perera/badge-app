@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BadgeBoard",
-  description: "Earn badges. Share learnings. Level up together.",
+  description: "Give badges. Share learnings. Level up together.",
 };
 
 export default function RootLayout({

@@ -19,6 +19,7 @@ export type UserBadge = {
   id: string
   user_id: string
   badge_id: string
+  given_by: string | null
   learning: string
   awarded_at: string
 }
@@ -28,6 +29,7 @@ export type LeaderboardEntry = {
   display_name: string
   avatar_url: string | null
   badge_count: number
+  badges_given: number
 }
 
 export type ActivityFeedItem = {
@@ -40,4 +42,6 @@ export type ActivityFeedItem = {
   badge_image_url: string | null
   learning: string
   awarded_at: string
+  giver_id: string | null
+  giver_display_name: string | null
 }

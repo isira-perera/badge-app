@@ -47,15 +47,16 @@ CREATE TABLE public.user_badges (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     UUID NOT NULL REFERENCES public.profiles (id) ON DELETE CASCADE,
   badge_id    UUID NOT NULL REFERENCES public.badges (id) ON DELETE CASCADE,
+  given_by    UUID REFERENCES public.profiles (id) ON DELETE SET NULL,
   learning    TEXT NOT NULL,
   awarded_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
 
-  -- a user can only earn a given badge once
+  -- a user can only receive a given badge once
   UNIQUE (user_id, badge_id)
 );
 
 COMMENT ON TABLE public.user_badges IS
-  'Records which user earned which badge, along with their personal learning reflection.';
+  'Records which user received which badge, who gave it, and the giver''s reflection on what the recipient learned.';
 
 
 -- ============================================================================
@@ -149,11 +150,11 @@ CREATE POLICY "user_badges: authenticated read"
   TO authenticated
   USING (true);
 
--- Users can award themselves a badge (user_id must be their own)
-CREATE POLICY "user_badges: owner insert"
+-- Any authenticated user can give a badge to another user (given_by must be themselves, user_id must NOT be themselves)
+CREATE POLICY "user_badges: authenticated give"
   ON public.user_badges FOR INSERT
   TO authenticated
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (given_by = auth.uid() AND user_id != auth.uid());
 
 -- Users can update their own earned-badge records (e.g. edit their reflection)
 CREATE POLICY "user_badges: owner update"
@@ -222,14 +223,15 @@ SELECT
   p.id,
   p.display_name,
   p.avatar_url,
-  COUNT(ub.id)::int AS badge_count
+  COUNT(ub.id)::int AS badge_count,
+  (SELECT COUNT(*)::int FROM public.user_badges g WHERE g.given_by = p.id) AS badges_given
 FROM public.profiles p
 LEFT JOIN public.user_badges ub ON ub.user_id = p.id
 GROUP BY p.id, p.display_name, p.avatar_url
 ORDER BY badge_count DESC;
 
 COMMENT ON VIEW public.leaderboard IS
-  'Profiles ranked by total badges earned (descending).';
+  'Profiles ranked by total badges received (descending), with badges_given count.';
 
 -- ---------------------------------------------------------------------------
 -- recent_activity: latest 50 badge awards with user + badge info
@@ -246,15 +248,18 @@ SELECT
   b.id           AS badge_id,
   b.name         AS badge_name,
   b.task         AS badge_task,
-  b.image_url    AS badge_image_url
+  b.image_url    AS badge_image_url,
+  giver.id       AS giver_id,
+  giver.display_name AS giver_display_name
 FROM public.user_badges ub
 JOIN public.profiles    p ON p.id = ub.user_id
 JOIN public.badges      b ON b.id = ub.badge_id
+LEFT JOIN public.profiles giver ON giver.id = ub.given_by
 ORDER BY ub.awarded_at DESC
 LIMIT 50;
 
 COMMENT ON VIEW public.recent_activity IS
-  'The 50 most recent badge awards, joined with profile and badge details.';
+  'The 50 most recent badge awards, joined with recipient, giver, and badge details.';
 
 
 -- ============================================================================

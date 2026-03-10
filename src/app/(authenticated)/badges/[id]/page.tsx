@@ -111,12 +111,12 @@ export default async function BadgeDetailPage({
         {!earners || earners.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-card border border-border rounded-lg">
             <Users className="w-8 h-8 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">No one has earned this badge yet. Be the first!</p>
+            <p className="text-sm">No one has received this badge yet. Be the first to give it!</p>
             <Link
-              href="/earn"
+              href="/give"
               className="inline-block mt-4 text-sm text-accent hover:underline"
             >
-              Earn this badge
+              Give this badge
             </Link>
           </div>
         ) : (

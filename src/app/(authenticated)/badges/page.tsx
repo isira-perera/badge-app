@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, PlusCircle, Users } from "lucide-react";
+import { BookOpen, Gift, Users } from "lucide-react";
 import { BadgeCatalogSearch } from "./badge-catalog-search";
 import type { Badge } from "@/lib/supabase/types";
 
@@ -46,11 +46,11 @@ export default async function BadgesCatalogPage() {
           </p>
         </div>
         <Link
-          href="/earn"
+          href="/give"
           className="flex items-center gap-2 px-4 py-2.5 bg-accent text-accent-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity text-sm"
         >
-          <PlusCircle className="w-4 h-4" />
-          Earn a Badge
+          <Gift className="w-4 h-4" />
+          Give a Badge
         </Link>
       </div>
 
