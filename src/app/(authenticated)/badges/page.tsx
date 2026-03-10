@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import Image from "next/image";
-import { BookOpen, Gift, Users } from "lucide-react";
+import { Gift } from "lucide-react";
 import { BadgeCatalogSearch } from "./badge-catalog-search";
 import type { Badge } from "@/lib/supabase/types";
 

@@ -111,7 +111,11 @@ export default function GivePage() {
       });
 
     if (insertError) {
-      setError(insertError.message);
+      setError(
+        insertError.code === "23505"
+          ? `${selectedRecipient.display_name} already has this badge!`
+          : insertError.message
+      );
       setSubmitting(false);
       return;
     }
@@ -172,7 +176,11 @@ export default function GivePage() {
       });
 
     if (giveError) {
-      setError(giveError.message);
+      setError(
+        giveError.code === "23505"
+          ? `${selectedRecipient.display_name} already has this badge!`
+          : giveError.message
+      );
       setSubmitting(false);
       return;
     }
@@ -202,12 +210,6 @@ export default function GivePage() {
       handleCreateAndGive();
     }
   };
-
-  const canProceedToBadge = !!selectedRecipient;
-  const canProceedToConfirm =
-    badgeMode === "existing"
-      ? !!selectedBadge
-      : !!newBadgeName.trim() && !!newBadgeTask.trim();
 
   return (
     <div>
