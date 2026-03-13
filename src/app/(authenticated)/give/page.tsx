@@ -12,6 +12,7 @@ import {
   Plus,
   BookOpen,
   Loader2,
+  Check,
   CheckCircle,
   AlertCircle,
   Gift,
@@ -233,29 +234,52 @@ export default function GivePage() {
 
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-8">
-        {[
-          { key: "recipient", label: "Pick Player" },
-          { key: "badge", label: "Choose Badge" },
-          { key: "confirm", label: "Add Learning" },
-        ].map((s, i) => (
-          <div key={s.key} className="flex items-center gap-2">
-            {i > 0 && (
-              <div className="w-8 h-px bg-border" />
-            )}
-            <div
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                step === s.key
-                  ? "bg-accent text-accent-foreground"
-                  : "bg-card border border-border text-muted-foreground"
-              }`}
-            >
-              <span className="w-5 h-5 rounded-full bg-background/20 flex items-center justify-center text-[10px] font-bold">
-                {i + 1}
-              </span>
-              {s.label}
+        {([
+          { key: "recipient" as const, label: "Pick Player" },
+          { key: "badge" as const, label: "Choose Badge" },
+          { key: "confirm" as const, label: "Add Learning" },
+        ] as const).map((s, i) => {
+          const stepOrder: Step[] = ["recipient", "badge", "confirm"];
+          const currentIdx = stepOrder.indexOf(step);
+          const thisIdx = i;
+          const isCompleted = thisIdx < currentIdx;
+          const isCurrent = step === s.key;
+          const hasBadgeData = badgeMode === "existing" ? !!selectedBadge : (!!newBadgeName.trim() && !!newBadgeTask.trim());
+          const canNavigate =
+            s.key === "recipient" ||
+            (s.key === "badge" && !!selectedRecipient) ||
+            (s.key === "confirm" && !!selectedRecipient && hasBadgeData);
+          const isClickable = canNavigate && !isCurrent;
+
+          return (
+            <div key={s.key} className="flex items-center gap-2">
+              {i > 0 && (
+                <div className={`w-8 h-px ${isCompleted ? "bg-accent/50" : "bg-border"}`} />
+              )}
+              <button
+                type="button"
+                disabled={!isClickable}
+                onClick={() => isClickable && setStep(s.key)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  isCurrent
+                    ? "bg-accent text-accent-foreground"
+                    : isCompleted
+                    ? "bg-accent/20 border border-accent/40 text-accent cursor-pointer hover:bg-accent/30"
+                    : isClickable
+                    ? "bg-card border border-border text-muted-foreground cursor-pointer hover:border-accent/40 hover:text-foreground"
+                    : "bg-card border border-border text-muted-foreground/50 cursor-not-allowed"
+                }`}
+              >
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                  isCompleted ? "bg-accent/30" : "bg-background/20"
+                }`}>
+                  {isCompleted ? <Check className="w-3 h-3" /> : i + 1}
+                </span>
+                {s.label}
+              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Success message */}
