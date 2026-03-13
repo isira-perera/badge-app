@@ -74,6 +74,16 @@ export default async function DashboardPage() {
     }) ?? []
   );
 
+  // Determine top giver
+  const leaderboardEntries = (leaderboard as LeaderboardEntry[] | null) ?? [];
+  const topGiver = leaderboardEntries.reduce<LeaderboardEntry | null>(
+    (best, entry) =>
+      entry.badges_given > 0 && (!best || entry.badges_given > best.badges_given)
+        ? entry
+        : best,
+    null
+  );
+
   return (
     <div className="space-y-10">
       {/* Sash Leaderboard */}
@@ -84,7 +94,7 @@ export default async function DashboardPage() {
             {entries.length} {entries.length === 1 ? "intern" : "interns"}
           </div>
         </div>
-        <SashBoard entries={entries} />
+        <SashBoard entries={entries} topGiverId={topGiver?.id ?? null} />
       </section>
 
       {/* Recent Activity */}

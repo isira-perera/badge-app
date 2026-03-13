@@ -91,7 +91,7 @@ export default function JoinPage() {
           <h1 className="text-3xl font-bold">Join BadgeBoard</h1>
         </div>
         <p className="text-muted mb-8">
-          Enter your email to join the community and start earning badges.
+          Enter your email to join the community and start giving badges.
         </p>
 
         <form onSubmit={handleJoin} className="space-y-4">

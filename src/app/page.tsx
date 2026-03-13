@@ -11,23 +11,23 @@ export default function LandingPage() {
           <h1 className="text-5xl font-bold tracking-tight">BadgeBoard</h1>
         </div>
         <p className="text-xl text-muted-foreground mb-12">
-          Earn badges. Share learnings. Level up together.
+          Give badges. Share learnings. Level up together.
         </p>
 
         {/* How It Works */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div className="text-center p-6 bg-surface rounded-lg">
             <Trophy className="w-10 h-10 text-accent mx-auto mb-4" />
-            <h3 className="font-semibold text-lg mb-2">1. Earn Badges</h3>
+            <h3 className="font-semibold text-lg mb-2">1. Give Badges</h3>
             <p className="text-muted-foreground text-sm">
-              Try new things and earn AI-generated badges for your intern experiences.
+              Recognize your peers by giving them AI-generated badges for their experiences.
             </p>
           </div>
           <div className="text-center p-6 bg-surface rounded-lg">
             <Sparkles className="w-10 h-10 text-accent mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">2. Share Learnings</h3>
             <p className="text-muted-foreground text-sm">
-              Reflect on what you learned and inspire others to try it too.
+              Listen to what your peers learned and capture it when you give them a badge.
             </p>
           </div>
           <div className="text-center p-6 bg-surface rounded-lg">

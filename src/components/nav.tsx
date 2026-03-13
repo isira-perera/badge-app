@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { Shield, Trophy, BookOpen, PlusCircle, Settings, UserCircle, LogOut } from "lucide-react";
+import { Shield, Trophy, BookOpen, Gift, Settings, UserCircle, LogOut } from "lucide-react";
 
 export function Nav({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
@@ -19,7 +19,7 @@ export function Nav({ isAdmin = false }: { isAdmin?: boolean }) {
   const links = [
     { href: "/dashboard", label: "Sashes", icon: Trophy },
     { href: "/badges", label: "Badges", icon: BookOpen },
-    { href: "/earn", label: "Earn", icon: PlusCircle },
+    { href: "/give", label: "Give", icon: Gift },
     { href: "/profile", label: "Profile", icon: UserCircle },
     ...(isAdmin ? [{ href: "/admin", label: "Admin", icon: Settings }] : []),
   ];

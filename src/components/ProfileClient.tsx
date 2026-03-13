@@ -292,7 +292,7 @@ export function ProfileClient({ profile, badges, email, isOwner = true }: Profil
                 <Trophy className="w-5 h-5 text-accent" />
                 <span className="text-lg font-bold">{badgeList.length}</span>
                 <span className="text-sm text-muted-foreground">
-                  {badgeList.length === 1 ? "badge" : "badges"} earned
+                  {badgeList.length === 1 ? "badge" : "badges"} received
                 </span>
               </div>
             </div>
@@ -391,15 +391,15 @@ export function ProfileClient({ profile, badges, email, isOwner = true }: Profil
       <div>
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
           <Trophy className="w-5 h-5 text-accent" />
-          Earned Badges
+          Received Badges
         </h2>
 
         {badgeList.length === 0 ? (
           <div className="text-center py-12 bg-card border border-border rounded-xl">
             <BookOpen className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-40" />
-            <p className="text-muted-foreground">No badges earned yet.</p>
+            <p className="text-muted-foreground">No badges received yet.</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Head to the Earn page to get your first badge!
+              Someone needs to give them a badge!
             </p>
           </div>
         ) : (

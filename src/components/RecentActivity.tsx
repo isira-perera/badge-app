@@ -59,10 +59,21 @@ function ActivityItem({ item }: { item: ActivityFeedItem }) {
         {/* Text content */}
         <div className="flex-1 min-w-0">
           <p className="text-sm">
-            <span className="font-semibold text-foreground">
-              {item.display_name}
-            </span>{" "}
-            <span className="text-muted-foreground">earned</span>{" "}
+            {item.giver_display_name ? (
+              <>
+                <span className="font-semibold text-foreground">
+                  {item.giver_display_name}
+                </span>{" "}
+                <span className="text-muted-foreground">gave</span>{" "}
+                <span className="font-semibold text-foreground">
+                  {item.display_name}
+                </span>
+              </>
+            ) : (
+              <span className="font-semibold text-foreground">
+                {item.display_name}
+              </span>
+            )}{" "}
             <span className="font-semibold text-accent">
               {item.badge_name}
             </span>
@@ -99,7 +110,7 @@ export function RecentActivity({ items }: RecentActivityProps) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         <Award className="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <p>No activity yet. Be the first to earn a badge!</p>
+        <p>No activity yet. Give someone their first badge!</p>
       </div>
     );
   }

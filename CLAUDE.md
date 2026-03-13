@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-**BadgeBoard** is a gamified community badge app where interns earn badges for new experiences, share learnings, and compete on a sash-based leaderboard.
+**BadgeBoard** is a gamified community badge app where interns give each other badges for new experiences, share learnings, and compete on a sash-based leaderboard. You cannot give yourself a badge — only to other players.
 
 **Stack:** Next.js 16 (App Router, Turbopack) + Tailwind CSS v4 + Supabase (Postgres, Auth, Storage) + Google Gemini 2.5 Flash for AI badge image generation. Deployed on Vercel.
 
@@ -33,19 +33,19 @@ All protected pages live under `src/app/(authenticated)/`. The group layout (`la
 
 The Supabase admin client uses `createClient` without generic DB types, so `.from()` returns `never`. Use `as any` cast for mutations — this is intentional since it bypasses RLS with the service role key.
 
-Image generation is **fire-and-forget** from the earn page — the badge is awarded instantly, image generates async in background.
+Image generation is **fire-and-forget** from the give page — the badge is awarded instantly, image generates async in background.
 
 ### Database Schema
 
 Defined in `supabase/schema.sql`. Four tables:
 - `profiles` — auto-created via trigger from `auth.users`, has `display_name`, `is_admin`
 - `badges` — shared definitions (name, task, image_url)
-- `user_badges` — who earned what + personal `learning` text. UNIQUE(user_id, badge_id).
+- `user_badges` — who received what badge, who gave it (`given_by`), and the giver's `learning` text. UNIQUE(user_id, badge_id).
 - `spectator_links` — shareable codes for read-only public access. Admin-only CRUD via RLS.
 
-Two views: `leaderboard` (profiles + badge count DESC), `recent_activity` (last 50 awards with joins).
+Two views: `leaderboard` (profiles + badge count DESC + badges_given count), `recent_activity` (last 50 awards with giver + recipient + badge joins).
 
-RLS is enabled on all tables. Users can update their own profile/user_badges, admins can delete anything.
+RLS is enabled on all tables. Insert policy on `user_badges` requires `given_by = auth.uid()` and `user_id != auth.uid()` (can't give to yourself). Users can update their own profile/user_badges, admins can delete anything.
 
 ### Theme System
 
