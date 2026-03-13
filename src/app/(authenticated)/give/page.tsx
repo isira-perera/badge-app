@@ -335,9 +335,10 @@ export default function GivePage() {
                   key={profile.id}
                   type="button"
                   onClick={() => {
+                    const isFirstPick = !selectedRecipient;
                     setSelectedRecipient(profile);
                     setError("");
-                    setStep("badge");
+                    if (isFirstPick) setStep("badge");
                   }}
                   className={`text-left p-4 rounded-lg border-2 transition-all ${
                     selectedRecipient?.id === profile.id
@@ -370,6 +371,17 @@ export default function GivePage() {
                 </button>
               ))}
             </div>
+          )}
+
+          {selectedRecipient && (
+            <button
+              type="button"
+              onClick={() => setStep("badge")}
+              className="mt-6 w-full px-4 py-3 bg-accent text-accent-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            >
+              <ArrowRight className="w-4 h-4" />
+              Next: Choose Badge
+            </button>
           )}
         </div>
       )}
@@ -478,9 +490,10 @@ export default function GivePage() {
                       key={badge.id}
                       type="button"
                       onClick={() => {
+                        const isFirstPick = !selectedBadge;
                         setSelectedBadge(badge);
                         setError("");
-                        setStep("confirm");
+                        if (isFirstPick) setStep("confirm");
                       }}
                       className={`text-left p-4 rounded-lg border-2 transition-all ${
                         selectedBadge?.id === badge.id
@@ -514,6 +527,17 @@ export default function GivePage() {
                     </button>
                   ))}
                 </div>
+              )}
+
+              {selectedBadge && (
+                <button
+                  type="button"
+                  onClick={() => setStep("confirm")}
+                  className="mt-2 w-full px-4 py-3 bg-accent text-accent-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                  Next: Add Learning
+                </button>
               )}
             </>
           ) : (
